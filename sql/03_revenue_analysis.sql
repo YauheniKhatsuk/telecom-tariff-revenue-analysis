@@ -122,3 +122,26 @@ final_revenue AS (
 SELECT *
 FROM final_revenue
 ORDER BY user_id, dt_month;
+
+-- 6. Average revenue by tariffs
+SELECT
+    tariff,
+    AVG(total_month_revenue) AS avg_monthly_revenue
+FROM final_revenue
+GROUP BY tariff;
+
+-- 7. Average overpayment of active users
+SELECT
+    tariff,
+    AVG(overpayment) AS avg_overpayment
+FROM final_revenue
+WHERE overpayment > 0
+GROUP BY tariff;
+
+-- 8. Share of users exceeding limits
+SELECT
+    tariff,
+    COUNT(DISTINCT user_id) FILTER (WHERE overpayment > 0)::float
+    / COUNT(DISTINCT user_id) AS overlimit_user_share
+FROM final_revenue
+GROUP BY tariff;
